@@ -15,59 +15,59 @@ D3DVERTEXELEMENT9 ToDX( VertexElement element )
 {
 	D3DVERTEXELEMENT9 out {};
 	
-	if ( unify::StringIs( "POSITION", element.SemanticName ) )
+	if ( unify::string::StringIs( "POSITION", element.SemanticName ) )
 	{
 		out.Usage = D3DDECLUSAGE_POSITION;
 	}
-	else if ( unify::StringIs( "BLENDWEIGHT", element.SemanticName ) )
+	else if ( unify::string::StringIs( "BLENDWEIGHT", element.SemanticName ) )
 	{
 		out.Usage = D3DDECLUSAGE_BLENDWEIGHT;
 	}
-	else if ( unify::StringIs( "BLENDINDICES", element.SemanticName ) )
+	else if ( unify::string::StringIs( "BLENDINDICES", element.SemanticName ) )
 	{
 		out.Usage = D3DDECLUSAGE_BLENDINDICES;
 	}
-	else if ( unify::StringIs( "NORMAL", element.SemanticName ) )
+	else if ( unify::string::StringIs( "NORMAL", element.SemanticName ) )
 	{
 		out.Usage = D3DDECLUSAGE_NORMAL;
 	}
-	else if ( unify::StringIs( "PSIZE", element.SemanticName ) )
+	else if ( unify::string::StringIs( "PSIZE", element.SemanticName ) )
 	{
 		out.Usage = D3DDECLUSAGE_PSIZE;
 	}
-	else if ( unify::StringIs( "TEXCOORD", element.SemanticName ) )
+	else if ( unify::string::StringIs( "TEXCOORD", element.SemanticName ) )
 	{
 		out.Usage = D3DDECLUSAGE_TEXCOORD;
 	}
-	else if ( unify::StringIs( "TANGENT", element.SemanticName ) )
+	else if ( unify::string::StringIs( "TANGENT", element.SemanticName ) )
 	{
 		out.Usage = D3DDECLUSAGE_TANGENT;
 	}
-	else if ( unify::StringIs( "BINORMAL", element.SemanticName ) )
+	else if ( unify::string::StringIs( "BINORMAL", element.SemanticName ) )
 	{
 		out.Usage = D3DDECLUSAGE_BINORMAL;
 	}
-	else if ( unify::StringIs( "TESSFACTOR", element.SemanticName ) )
+	else if ( unify::string::StringIs( "TESSFACTOR", element.SemanticName ) )
 	{
 		out.Usage = D3DDECLUSAGE_TESSFACTOR;
 	}
-	else if ( unify::StringIs( "POSITIONT", element.SemanticName ) )
+	else if ( unify::string::StringIs( "POSITIONT", element.SemanticName ) )
 	{
 		out.Usage = D3DDECLUSAGE_POSITIONT;
 	}
-	else if ( unify::StringIs( "COLOR", element.SemanticName ) )
+	else if ( unify::string::StringIs( "COLOR", element.SemanticName ) )
 	{
 		out.Usage = D3DDECLUSAGE_COLOR;
 	}
-	else if ( unify::StringIs( "FOG", element.SemanticName ) )
+	else if ( unify::string::StringIs( "FOG", element.SemanticName ) )
 	{
 		out.Usage = D3DDECLUSAGE_FOG;
 	}
-	else if ( unify::StringIs( "DEPTH", element.SemanticName ) )
+	else if ( unify::string::StringIs( "DEPTH", element.SemanticName ) )
 	{
 		out.Usage = D3DDECLUSAGE_DEPTH;
 	}
-	else if ( unify::StringIs( "SAMPLE", element.SemanticName ) )
+	else if ( unify::string::StringIs( "SAMPLE", element.SemanticName ) )
 	{
 		out.Usage = D3DDECLUSAGE_SAMPLE;
 	}
