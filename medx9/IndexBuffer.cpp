@@ -99,7 +99,7 @@ void IndexBuffer::Create( IndexBufferParameters parameters )
 		// Create the index list...
 		unify::DataLock lock;
 		Lock( bufferIndex, lock );
-		memcpy( lock.GetData(), parameters.countAndSource[bufferIndex].source, m_length * sizeof( Index32 ) );
+		memcpy( lock.GetData<unsigned char >(), parameters.countAndSource[bufferIndex].source, m_length * sizeof( Index32 ) );
 		Unlock( bufferIndex, lock );
 	}
 }
@@ -125,7 +125,7 @@ void IndexBuffer::Lock( size_t bufferIndex, unify::DataLock & lock )
 		throw exception::FailedToLock( "Failed to lock index buffer!" );
 	}
 
-	lock.SetLock( data, GetStride(bufferIndex), GetLength(bufferIndex), false, 0 );
+	lock.SetLock( data, GetStride(bufferIndex), GetLength(bufferIndex), unify::DataLock::ReadWrite, 0 );
 	m_locked = true;
 }
 
@@ -142,7 +142,7 @@ void IndexBuffer::LockReadOnly( size_t bufferIndex, unify::DataLock & lock ) con
 	{
 		throw exception::FailedToLock( "Failed to lock indices!" );
 	}
-	lock.SetLock( data, GetStride(bufferIndex), GetLength(bufferIndex), true, 0 );
+	lock.SetLock( data, GetStride(bufferIndex), GetLength(bufferIndex), unify::DataLock::Readonly, 0 );
 	bool & locked = *const_cast<bool*>(&m_locked); // Break const for locking.
 	locked = false;
 }

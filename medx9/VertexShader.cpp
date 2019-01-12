@@ -169,7 +169,7 @@ const ConstantBuffer * VertexShader::GetConstants() const
 
 void VertexShader::LockConstants( size_t buffer, unify::DataLock & lock )
 {
-	lock.SetLock( &m_lockData[0], sizeof( unify::Matrix ) * m_lockData.size(), false, 0 );
+	lock.SetLock( &m_lockData[0], sizeof( unify::Matrix ) * m_lockData.size(), unify::DataLock::ReadWrite, 0 );
 }
 
 void VertexShader::UnlockConstants( size_t buffer, unify::DataLock & lock )

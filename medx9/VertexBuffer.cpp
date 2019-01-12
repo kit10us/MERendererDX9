@@ -114,7 +114,7 @@ void VertexBuffer::Lock( size_t bufferIndex, unify::DataLock & lock )
 		throw exception::FailedToLock( "Failed to lock vertex buffer!" );
 	}
 
-	lock.SetLock( data, m_vertexDeclaration->GetSizeInBytes( bufferIndex ), GetLength(bufferIndex), false, 0 );
+	lock.SetLock( data, m_vertexDeclaration->GetSizeInBytes( bufferIndex ), GetLength(bufferIndex), unify::DataLock::ReadWrite, 0 );
 	m_locked[ bufferIndex ] = true;
 }
 
@@ -129,7 +129,7 @@ void VertexBuffer::LockReadOnly( size_t bufferIndex, unify::DataLock & lock ) co
 		throw exception::FailedToLock( "Failed to lock vertex buffer!" );
 	}
 
-	lock.SetLock( data, m_vertexDeclaration->GetSizeInBytes( bufferIndex ), GetLength(bufferIndex), true, 0 );
+	lock.SetLock( data, m_vertexDeclaration->GetSizeInBytes( bufferIndex ), GetLength(bufferIndex), unify::DataLock::Readonly, 0 );
 }
 
 void VertexBuffer::Unlock( size_t bufferIndex, unify::DataLock & lock )
