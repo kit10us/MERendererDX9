@@ -104,6 +104,11 @@ void IndexBuffer::Create( IndexBufferParameters parameters )
 	}
 }
 
+size_t IndexBuffer::GetStride( size_t bufferIndex ) const
+{
+	return m_stride;
+}
+
 void IndexBuffer::Destroy()
 {
 	if ( m_buffer )
@@ -197,11 +202,6 @@ bool IndexBuffer::Locked( size_t bufferIndex ) const
 BufferUsage::TYPE IndexBuffer::GetUsage( size_t bufferIndex ) const
 {
 	return m_usage;
-}
-
-size_t IndexBuffer::GetStride( size_t bufferIndex ) const
-{
-	return m_stride;
 }
 
 size_t IndexBuffer::GetLength( size_t bufferIndex ) const
