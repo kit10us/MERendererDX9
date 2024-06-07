@@ -66,7 +66,7 @@ void PixelShader::Create( PixelShaderParameters parameters )
 			DWORD flags = 0;
 			result = D3DXCompileShaderFromFileA( m_parameters.path.ToString().c_str(), 0, 0, m_parameters.entryPointName.c_str(), m_parameters.profile.c_str(), flags, &m_codeBuffer, &errorBuffer, &m_constantTable );
 		}
-		if( m_codeBuffer == 0 || FAILED( result ) )
+		if( m_codeBuffer == 0 || WIN_FAILED( result ) )
 		{
 			m_errorMessage = static_cast< char * >(errorBuffer->GetBufferPointer());
 			throw unify::Exception( "Failed to create shader \"" + m_parameters.path.ToString() + "\": " + m_errorMessage + "\n" );
@@ -85,7 +85,7 @@ void PixelShader::Create( PixelShaderParameters parameters )
 			D3DXCompileShader( m_parameters.code.c_str(), static_cast< unsigned int >(m_parameters.code.length() - 1), 0, 0, m_parameters.entryPointName.c_str(), m_parameters.profile.c_str(), flags, &m_codeBuffer, &errorBuffer, &m_constantTable );
 		}
 
-		if( m_codeBuffer == 0 || FAILED( result ) )
+		if( m_codeBuffer == 0 || WIN_FAILED( result ) )
 		{
 			m_errorMessage = static_cast< char * >(errorBuffer->GetBufferPointer());
 			throw unify::Exception( "Failed to create shader from code: " + m_errorMessage + "\n" );
@@ -149,7 +149,7 @@ size_t PixelShader::GetBytecodeLength() const
 void PixelShader::Use()
 {
 	HRESULT result = m_renderer->GetDxDevice()->SetPixelShader( m_shader );
-	if( FAILED( result ) )
+	if(WIN_FAILED( result ) )
 	{
 		throw unify::Exception( "Failed to set pixel shader!" );
 	}

@@ -40,9 +40,9 @@ namespace medx9
 	protected:
 		const Renderer* m_renderer;
 
-		/*
 		me::render::ConstantBufferParameters m_parameters;
-		me::render::ConstantTable m_table;
+		me	::render::ConstantTable m_table;
+		/*
 		std::vector< ID3D11Buffer* > m_buffers;
 		size_t m_locked;
 		size_t m_bufferAccessed;

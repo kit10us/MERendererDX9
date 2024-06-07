@@ -3,8 +3,7 @@
 #pragma once
 
 // A common header to include Direct-X and Windows in a clean manor.
-
-#define WIN32_LEAN_AND_MEAN // For winsock.
+#include <port/win/Windows.h>
 
 #ifdef _DEBUG
 #define D3D_DEBUG_INFO
@@ -27,13 +26,3 @@
 #include <d3d9.h>
 #include <d3dx9core.h>
 #include <d3dx9shader.h>
-
-
-#ifdef min
-#undef min
-#endif
-
-#ifdef max
-#undef max
-#endif
-

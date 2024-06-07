@@ -68,11 +68,11 @@ Renderer::Renderer( me::os::IOS * os, Display display, size_t index )
 	if ( m_dxDevice == 0 )
 	{
 		hr = dx->CreateDevice( 0, deviceType, (HWND)display.GetHandle(), behaviorFlags, &m_pp, &m_dxDevice );
-		if ( FAILED( hr ) )
+		if (WIN_FAILED( hr ) )
 		{
 			// Direct-X attempts to fix the presentation parameters, so a second attempt might resolve.
 			hr = dx->CreateDevice( 0, deviceType, (HWND)display.GetHandle(), behaviorFlags, &m_pp, &m_dxDevice );
-			if ( FAILED( hr ) )
+			if (WIN_FAILED( hr ) )
 			{
 				throw std::exception( "Failed to create Direct-X device!" );
 			}
@@ -84,7 +84,7 @@ Renderer::Renderer( me::os::IOS * os, Display display, size_t index )
 	{
 		IDirect3DSwapChain9 * swapChain{};
 		hr = m_dxDevice->CreateAdditionalSwapChain( &m_pp, &m_swapChain );
-		if ( FAILED( hr ) )
+		if (WIN_FAILED( hr ) )
 		{
 			throw std::exception( "Failed to create Direct-X swap chain!" );
 		}
@@ -124,7 +124,7 @@ void Renderer::BeforeRender()
 {
 	HRESULT result;
 	result = m_dxDevice->Clear( 0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB( 0, 0, 90 ), 1.0f, 0 );
-	if ( FAILED( result ) )
+	if (WIN_FAILED( result ) )
 	{
 		throw unify::Exception( "Failed to clear in BeforeRender!" );
 	}
@@ -134,7 +134,7 @@ void Renderer::BeforeRender()
 	result = m_dxDevice->SetRenderTarget( 0, backBuffer );
 
 	result = m_dxDevice->BeginScene();
-	if ( FAILED( result ) )
+	if (WIN_FAILED( result ) )
 	{
 		throw unify::Exception( "Failed to BeginScene in BeforeRender!" );
 	}
@@ -152,14 +152,14 @@ void Renderer::AfterRender()
 {
 	HRESULT result;
 	result = m_dxDevice->EndScene();
-	if ( FAILED( result ) )
+	if (WIN_FAILED( result ) )
 	{
 		throw unify::Exception( "Failed to EndScene in AfterRender!" );
 	}
 
 	result = m_swapChain->Present( 0, 0, 0, 0, 0 );
 
-	if ( FAILED( result ) )
+	if (WIN_FAILED( result ) )
 	{
 		throw unify::Exception( "Failed to Present in AfterRender!" );
 	}
@@ -219,7 +219,7 @@ void Renderer::Render(const me::render::RenderInfo& renderInfo, const me::render
 		{
 			hr = dxDevice->DrawIndexedPrimitive( dxPrimitiveType, method.baseVertexIndex, method.minIndex, method.vertexCount, method.startIndex, method.primitiveCount );
 		}
-		if ( FAILED(hr) )
+		if (WIN_FAILED(hr) )
 		{
 			throw exception::Render( "Failed to render vertex buffer!" );
 		}
@@ -268,7 +268,7 @@ void Renderer::UseTextures( std::vector< ITexture::ptr > textures )
 	{
 		auto texture = reinterpret_cast<medx9::Texture*>( textures[stage].get() );
 		hr = GetDxDevice()->SetTexture( stage, texture->m_texture );
-		if( FAILED( hr ) )
+		if(WIN_FAILED( hr ) )
 		{
 			throw exception::Render( "Failed to use textures!" );
 		}

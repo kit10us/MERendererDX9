@@ -10,20 +10,14 @@
 #include <unify/Path.h>
 #include <string>
 #include <memory>
-#include <atlbase.h>
 
 // MS agressive macros.
 #ifdef LoadImage
 #undef LoadImage
 #endif
 
-#ifdef min
-#undef min
-#endif
-
 namespace medx9
 {
-
 	//////////////////////////////////
 	// Font definitions...
 

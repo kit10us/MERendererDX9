@@ -101,7 +101,7 @@ void Texture::LockRect( unsigned int level, TextureLock & lock, const unify::Rec
 	unsigned int dxFlags = (access == unify::DataLockAccess::Readonly) ? D3DLOCK_READONLY : 0;
 
 	D3DLOCKED_RECT d3dLockedRect;
-	if( FAILED( m_texture->LockRect( level, &d3dLockedRect, (RECT*)rect, dxFlags ) ) )
+	if(WIN_FAILED( m_texture->LockRect( level, &d3dLockedRect, (RECT*)rect, dxFlags ) ) )
 	{
 		lock.pBits = 0;
 		lock.uStride = 0;
@@ -198,7 +198,7 @@ void Texture::LoadImage( unify::Path filePath )
 		NULL,
 		&m_texture );
 
-	if( FAILED( result ) )
+	if(WIN_FAILED( result ) )
 	{
 		Destroy();
 		throw unify::Exception( "Failed to load image\"" + filePath.ToString() + "\"!" );

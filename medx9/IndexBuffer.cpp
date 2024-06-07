@@ -89,7 +89,7 @@ void IndexBuffer::Create( IndexBufferParameters parameters )
 		&m_buffer,
 		NULL
 	);
-	if ( FAILED( hr ) )
+	if ( WIN_FAILED( hr ) )
 	{
 		throw exception::FailedToCreate( "Failed to create index buffer!" );
 	}
@@ -141,7 +141,7 @@ void IndexBuffer::Use(size_t startBuffer, size_t startSlot) const
 	auto dxDevice = m_renderer->GetDxDevice();
 
 	HRESULT hr = dxDevice->SetIndices(m_buffer);
-	if (FAILED(hr))
+	if (WIN_FAILED(hr))
 	{
 		throw unify::Exception("Failed to use index buffer!");
 	}
@@ -152,7 +152,7 @@ void IndexBuffer::Lock( size_t bufferIndex, unify::DataLock & lock )
 	HRESULT hr;
 	unsigned char * data;
 	hr = m_buffer->Lock( 0, 0, (void**)&data, 0 );
-	if ( FAILED( hr ) )
+	if (WIN_FAILED( hr ))
 	{
 		lock.Invalidate();
 		throw exception::FailedToLock( "Failed to lock index buffer!" );
@@ -171,7 +171,7 @@ void IndexBuffer::LockReadOnly( size_t bufferIndex, unify::DataLock & lock ) con
 	}
 
 	void * data = 0;
-	if ( FAILED( m_buffer->Lock( 0, 0, &data, D3DLOCK_READONLY ) ) )
+	if (WIN_FAILED(m_buffer->Lock(0, 0, &data, D3DLOCK_READONLY)))
 	{
 		throw exception::FailedToLock( "Failed to lock indices!" );
 	}

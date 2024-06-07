@@ -153,7 +153,7 @@ void VertexBuffer::Use(size_t startBuffer, size_t startSlot) const
 		unsigned int offsetInBytes = 0;
 		HRESULT hr = S_OK;
 		hr = dxDevice->SetStreamSource((UINT)bufferIndex, m_buffers[bufferIndex], offsetInBytes, (UINT)m_strides[bufferIndex]);
-		if (FAILED(hr))
+		if (WIN_FAILED(hr))
 		{
 			throw unify::Exception("VertexBuffer: Failed to SetStreamSource!");
 		}
@@ -165,7 +165,7 @@ void VertexBuffer::Lock(size_t bufferIndex, unify::DataLock& lock)
 	HRESULT hr;
 	unsigned char* data;
 	hr = m_buffers[bufferIndex]->Lock(0, 0, (void**)&data, 0);
-	if (FAILED(hr))
+	if (WIN_FAILED(hr))
 	{
 		lock.Invalidate();
 		throw exception::FailedToLock("Failed to lock vertex buffer!");
@@ -180,7 +180,7 @@ void VertexBuffer::LockReadOnly(size_t bufferIndex, unify::DataLock& lock) const
 	HRESULT hr;
 	unsigned char* data;
 	hr = m_buffers[bufferIndex]->Lock(0, 0, (void**)&data, D3DLOCK_READONLY);
-	if (FAILED(hr))
+	if (WIN_FAILED(hr))
 	{
 		lock.Invalidate();
 		throw exception::FailedToLock("Failed to lock vertex buffer!");

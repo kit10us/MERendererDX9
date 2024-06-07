@@ -9,7 +9,6 @@
 #include <me/render/VertexDeclaration.h>
 #include <me/render/IConstantBuffer.h>
 #include <unify/Path.h>
-#include <atlbase.h>
 
 namespace medx9
 {

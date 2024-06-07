@@ -5,7 +5,6 @@
 
 #include <medx9/Renderer.h>
 #include <me/render/IConstantBuffer.h>
-#include <atlbase.h>
 #include <unify/Path.h>
 #include <memory>
 

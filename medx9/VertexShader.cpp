@@ -83,7 +83,7 @@ void VertexShader::Create( VertexShaderParameters parameters )
 			DWORD flags = 0;
 			result = D3DXCompileShaderFromFileA( m_filePath.ToString().c_str(), 0, 0, m_entryPointName.c_str(), m_profile.c_str(), flags, &m_codeBuffer, &errorBuffer, &m_constantTable );
 		}
-		if( m_codeBuffer == 0 || FAILED( result ) )
+		if( m_codeBuffer == 0 || WIN_FAILED( result ) )
 		{
 			m_errorMessage = static_cast< char * >(errorBuffer->GetBufferPointer());
 			errorBuffer->Release();
@@ -104,7 +104,7 @@ void VertexShader::Create( VertexShaderParameters parameters )
 			D3DXCompileShader( m_code.c_str(), static_cast< unsigned int >(m_code.length() - 1), 0, 0, m_entryPointName.c_str(), m_profile.c_str(), flags, &m_codeBuffer, &errorBuffer, &m_constantTable );
 		}
 
-		if( m_codeBuffer == 0 || FAILED( result ) )
+		if( m_codeBuffer == 0 || WIN_FAILED( result ) )
 		{
 			m_errorMessage = static_cast< char * >(errorBuffer->GetBufferPointer());
 			errorBuffer->Release();
@@ -228,7 +228,7 @@ void VertexShader::Use()
 	}
 
 	result = m_renderer->GetDxDevice()->SetVertexShader( m_shader );
-	if( FAILED( result ) )
+	if(WIN_FAILED( result ) )
 	{
 		throw unify::Exception( "Failed to set vertex shader!" );
 	}

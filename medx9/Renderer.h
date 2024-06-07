@@ -7,7 +7,6 @@
 #include <me/render/Display.h>
 #include <medx9/DirectX.h>
 #include <mewos/WindowsOS.h>
-#include <atlbase.h>
 #include <memory>
 
 namespace medx9

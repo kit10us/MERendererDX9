@@ -10,11 +10,6 @@
 #include <medx9/Renderer.h>
 #include <unify/BBox.h>
 
-#pragma warning( push )
-#pragma warning( disable:4005 ) // Ignore "warning C4005: 'MAKEFOURCC': macro redefinition" due to mmsyscom.h(153) and dds.h(62).
-#include <atlbase.h>
-#pragma warning( pop )
-
 namespace medx9
 {
 	class VertexBuffer : public me::render::IVertexBuffer

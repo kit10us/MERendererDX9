@@ -107,7 +107,7 @@ VertexConstruct::VertexConstruct( IRenderer * renderer, const VertexDeclaration 
 	elements.push_back( D3DDECL_END() );
 
 	HRESULT hr = m_renderer->GetDxDevice()->CreateVertexDeclaration( &elements[0], &m_layout );
-	if ( FAILED( hr ) )
+	if (WIN_FAILED( hr ) )
 	{
 		throw unify::Exception( "Failed to create vertex declaration!" );
 	}		   
@@ -121,7 +121,7 @@ VertexConstruct::~VertexConstruct()
 void VertexConstruct::Use() const
 {
 	HRESULT result = m_renderer->GetDxDevice()->SetVertexDeclaration( m_layout );
-	if ( FAILED( result ) )
+	if (WIN_FAILED( result ) )
 	{
 		throw unify::Exception( "Failed to set vertex declaration!" );
 	}

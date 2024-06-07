@@ -9,7 +9,6 @@
 #include <unify/unify.h>
 #include <unify/String.h>
 #include <unify/DataLock.h>
-#include <atlbase.h>
 #include <map>
 
 namespace medx9
