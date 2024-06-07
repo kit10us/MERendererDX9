@@ -41,7 +41,7 @@ void IndexBuffer::Create( IndexBufferParameters parameters )
 
 	HRESULT hr = S_OK;
 
-	m_length = parameters.countAndSource[0].count;
+	m_length = (unsigned int)parameters.countAndSource[0].count;
 
 	auto dxDevice = m_renderer->GetDxDevice();
 
@@ -82,7 +82,7 @@ void IndexBuffer::Create( IndexBufferParameters parameters )
 
 	// Create Index Buffer...
 	hr = dxDevice->CreateIndexBuffer(
-		GetSizeInBytes(bufferIndex),
+		(UINT)GetSizeInBytes(bufferIndex),
 		createFlags,
 		d3dFormat,
 		pool,
@@ -109,6 +109,12 @@ size_t IndexBuffer::GetStride( size_t bufferIndex ) const
 	return m_stride;
 }
 
+bool IndexBuffer::Valid() const
+{
+	return m_buffer != nullptr;
+}
+
+
 void IndexBuffer::Destroy()
 {
 	if ( m_buffer )
@@ -117,6 +123,28 @@ void IndexBuffer::Destroy()
 	}
 	m_buffer = nullptr;
 	m_length = 0;
+}
+
+size_t IndexBuffer::GetBufferCount() const
+{
+	// SAS TODO:
+	return 1;
+}
+
+void IndexBuffer::Use(size_t startBuffer, size_t startSlot) const
+{
+	if (!m_buffer)
+	{
+		return;
+	}
+
+	auto dxDevice = m_renderer->GetDxDevice();
+
+	HRESULT hr = dxDevice->SetIndices(m_buffer);
+	if (FAILED(hr))
+	{
+		throw unify::Exception("Failed to use index buffer!");
+	}
 }
 
 void IndexBuffer::Lock( size_t bufferIndex, unify::DataLock & lock )
@@ -130,7 +158,7 @@ void IndexBuffer::Lock( size_t bufferIndex, unify::DataLock & lock )
 		throw exception::FailedToLock( "Failed to lock index buffer!" );
 	}
 
-	lock.SetLock( data, GetStride(bufferIndex), GetLength(bufferIndex), unify::DataLock::ReadWrite, 0 );
+	lock.SetLock( data, GetStride(bufferIndex), GetLength(bufferIndex), unify::DataLockAccess::ReadWrite, 0 );
 	m_locked = true;
 }
 
@@ -147,7 +175,7 @@ void IndexBuffer::LockReadOnly( size_t bufferIndex, unify::DataLock & lock ) con
 	{
 		throw exception::FailedToLock( "Failed to lock indices!" );
 	}
-	lock.SetLock( data, GetStride(bufferIndex), GetLength(bufferIndex), unify::DataLock::Readonly, 0 );
+	lock.SetLock( data, GetStride(bufferIndex), GetLength(bufferIndex), unify::DataLockAccess::Readonly, 0 );
 	bool & locked = *const_cast<bool*>(&m_locked); // Break const for locking.
 	locked = false;
 }
@@ -171,27 +199,6 @@ void IndexBuffer::UnlockReadOnly( size_t bufferIndex, unify::DataLock & lock ) c
 	m_buffer->Unlock();
 	bool & locked = *const_cast<bool*>(&m_locked); // Break const for locking.
 	locked = false;
-}
-
-bool IndexBuffer::Valid() const
-{
-	return m_buffer != nullptr;
-}
-
-void IndexBuffer::Use() const
-{
-	if ( !m_buffer )
-	{
-		return;
-	}
-
-	auto dxDevice = m_renderer->GetDxDevice();
-
-	HRESULT hr = dxDevice->SetIndices( m_buffer );
-	if ( FAILED( hr ) )
-	{
-		throw unify::Exception( "Failed to use index buffer!" );
-	}
 }
 
 bool IndexBuffer::Locked( size_t bufferIndex ) const

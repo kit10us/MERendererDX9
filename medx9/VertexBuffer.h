@@ -25,26 +25,36 @@ namespace medx9
 		~VertexBuffer();
 
 		void Create( me::render::VertexBufferParameters parameters ) override;
-		void Destroy();
 
-		void Lock( size_t bufferIndex, unify::DataLock & lock ) override;
-		void LockReadOnly( size_t bufferIndex, unify::DataLock & lock ) const override;
-		void Unlock( size_t bufferIndex, unify::DataLock & lock ) override;
-		void UnlockReadOnly( size_t bufferIndex, unify::DataLock & lock ) const override;
-		
 		me::render::VertexDeclaration::ptr GetVertexDeclaration() const override;
 		
 		bool Valid() const;
-		void Use() const override;
 
 		unify::BBox< float > & GetBBox() override;
 		const unify::BBox< float > & GetBBox() const override;
 
-		bool Locked( size_t bufferIndex ) const override;
-		me::render::BufferUsage::TYPE GetUsage( size_t bufferIndex ) const override;
-		size_t GetStride( size_t bufferIndex ) const override;
-		size_t GetLength( size_t bufferIndex ) const override;
-		size_t GetSizeInBytes( size_t bufferIndex ) const override;
+		size_t GetStride( size_t bufferIndex ) const;
+		size_t GetLength( size_t bufferIndex ) const;
+		size_t GetSizeInBytes( size_t bufferIndex ) const;
+
+	public: // IBuffer
+		void Destroy() override;
+
+		size_t GetBufferCount() const override;
+
+		void Use(size_t startBuffer, size_t startSlot) const override;
+
+		void Lock(size_t bufferIndex, unify::DataLock& lock) override;
+
+		void LockReadOnly(size_t bufferIndex, unify::DataLock& lock) const override;
+
+		void Unlock(size_t bufferIndex, unify::DataLock& lock) override;
+
+		void UnlockReadOnly(size_t bufferIndex, unify::DataLock& lock) const override;
+
+		bool Locked(size_t bufferIndex) const override;
+
+		me::render::BufferUsage::TYPE GetUsage(size_t bufferIndex) const override;
 
 	protected:
 		const Renderer * m_renderer;

@@ -5,7 +5,6 @@
 #include <me/exception/FailedToCreate.h>
 #include <me/exception/FailedToLock.h>
 #include <me/exception/NotImplemented.h>
-#include <me/exception/Exception.h>
 
 using namespace medx9;
 using namespace me;
@@ -74,8 +73,8 @@ void VertexBuffer::Create( VertexBufferParameters parameters )
 		// Create Vertex Buffer...
 		HRESULT hr;
 		IDirect3DVertexBuffer9 * buffer{};
-		hr = dxDevice->CreateVertexBuffer( GetSizeInBytes(bufferIndex), createFlags, 0, pool, &buffer, 0 );
-		OnFailedThrow( hr, "Failed to create vertex buffer!" );
+		hr = dxDevice->CreateVertexBuffer( (UINT)GetSizeInBytes(bufferIndex), createFlags, 0, pool, &buffer, 0 );
+		// SAS TODO: OnFailedThrow( hr, "Failed to create vertex buffer!" );
 
 		m_buffers.push_back( buffer );
 
@@ -92,60 +91,6 @@ void VertexBuffer::Create( VertexBufferParameters parameters )
 	m_bbox = parameters.bbox;
 }
 
-void VertexBuffer::Destroy()
-{
-	for ( auto && buffer : m_buffers )
-	{
-		buffer->Release();
-	}
-	m_buffers.clear();
-	m_lengths.clear();
-	m_strides.clear();
-}
-
-void VertexBuffer::Lock( size_t bufferIndex, unify::DataLock & lock )
-{
-	HRESULT hr;
-	unsigned char * data;
-	hr = m_buffers[ bufferIndex ]->Lock( 0, 0, (void**)&data, 0 );
-	if( FAILED( hr ) )
-	{
-		lock.Invalidate();
-		throw exception::FailedToLock( "Failed to lock vertex buffer!" );
-	}
-
-	lock.SetLock( data, m_vertexDeclaration->GetSizeInBytes( bufferIndex ), GetLength(bufferIndex), unify::DataLock::ReadWrite, 0 );
-	m_locked[ bufferIndex ] = true;
-}
-
-void VertexBuffer::LockReadOnly( size_t bufferIndex, unify::DataLock & lock ) const
-{
-	HRESULT hr;
-	unsigned char * data;
-	hr = m_buffers[ bufferIndex ]->Lock( 0, 0, (void**)&data, D3DLOCK_READONLY );
-	if( FAILED( hr ) )
-	{
-		lock.Invalidate();
-		throw exception::FailedToLock( "Failed to lock vertex buffer!" );
-	}
-
-	lock.SetLock( data, m_vertexDeclaration->GetSizeInBytes( bufferIndex ), GetLength(bufferIndex), unify::DataLock::Readonly, 0 );
-}
-
-void VertexBuffer::Unlock( size_t bufferIndex, unify::DataLock & lock )
-{
-	if( ! m_buffers[ bufferIndex ] || ! m_locked[bufferIndex] ) return;
-	m_buffers[bufferIndex]->Unlock();
-	m_locked[ bufferIndex ] = FALSE;	// altering data in a constant function
-}
-
-void VertexBuffer::UnlockReadOnly( size_t bufferIndex, unify::DataLock & lock ) const
-{
-	if( ! m_buffers[ bufferIndex ] || ! m_locked[ bufferIndex ] ) return;
-	m_buffers[ bufferIndex ]->Unlock();
-	m_locked[bufferIndex] = false;
-}	
-
 VertexDeclaration::ptr VertexBuffer::GetVertexDeclaration() const
 {
 	return m_vertexDeclaration;
@@ -156,21 +101,6 @@ bool VertexBuffer::Valid() const
 	return m_buffers.size() == m_strides.size();
 }
 
-void VertexBuffer::Use() const
-{
-	auto dxDevice = m_renderer->GetDxDevice();
-	for ( size_t bufferIndex = 0, buffer_count = m_buffers.size(); bufferIndex < buffer_count; bufferIndex++ )
-	{
-		unsigned int offsetInBytes = 0;	  
-		HRESULT hr = S_OK;
-		hr = dxDevice->SetStreamSource( bufferIndex, m_buffers[ bufferIndex ], offsetInBytes, m_strides[ bufferIndex ] );
-		if ( FAILED( hr ) )
-		{
-			throw unify::Exception( "VertexBuffer: Failed to SetStreamSource!" );
-		}
-	}
-}
-
 unify::BBox< float > & VertexBuffer::GetBBox()
 {
 	return m_bbox;
@@ -179,16 +109,6 @@ unify::BBox< float > & VertexBuffer::GetBBox()
 const unify::BBox< float > & VertexBuffer::GetBBox() const
 {
 	return m_bbox;
-}
-
-bool VertexBuffer::Locked( size_t bufferIndex ) const
-{
-	return m_locked[ bufferIndex ];
-}
-
-BufferUsage::TYPE VertexBuffer::GetUsage( size_t bufferIndex ) const
-{
-	return m_usage[ bufferIndex ];
 }
 
 size_t VertexBuffer::GetStride( size_t bufferIndex ) const
@@ -204,4 +124,91 @@ size_t VertexBuffer::GetLength( size_t bufferIndex ) const
 size_t VertexBuffer::GetSizeInBytes( size_t bufferIndex ) const
 {
 	return m_strides[ bufferIndex ] * m_lengths[ bufferIndex ];
+}
+
+
+
+void VertexBuffer::Destroy()
+{
+	for (auto&& buffer : m_buffers)
+	{
+		buffer->Release();
+	}
+	m_buffers.clear();
+	m_lengths.clear();
+	m_strides.clear();
+}
+
+size_t VertexBuffer::GetBufferCount() const
+{
+	// SAS TODO:
+	return m_buffers.size();
+}
+
+void VertexBuffer::Use(size_t startBuffer, size_t startSlot) const
+{
+	auto dxDevice = m_renderer->GetDxDevice();
+	for (size_t bufferIndex = 0, buffer_count = m_buffers.size(); bufferIndex < buffer_count; bufferIndex++)
+	{
+		unsigned int offsetInBytes = 0;
+		HRESULT hr = S_OK;
+		hr = dxDevice->SetStreamSource((UINT)bufferIndex, m_buffers[bufferIndex], offsetInBytes, (UINT)m_strides[bufferIndex]);
+		if (FAILED(hr))
+		{
+			throw unify::Exception("VertexBuffer: Failed to SetStreamSource!");
+		}
+	}
+}
+
+void VertexBuffer::Lock(size_t bufferIndex, unify::DataLock& lock)
+{
+	HRESULT hr;
+	unsigned char* data;
+	hr = m_buffers[bufferIndex]->Lock(0, 0, (void**)&data, 0);
+	if (FAILED(hr))
+	{
+		lock.Invalidate();
+		throw exception::FailedToLock("Failed to lock vertex buffer!");
+	}
+
+	lock.SetLock(data, m_vertexDeclaration->GetSizeInBytes(bufferIndex), GetLength(bufferIndex), unify::DataLockAccess::ReadWrite, 0);
+	m_locked[bufferIndex] = true;
+}
+
+void VertexBuffer::LockReadOnly(size_t bufferIndex, unify::DataLock& lock) const
+{
+	HRESULT hr;
+	unsigned char* data;
+	hr = m_buffers[bufferIndex]->Lock(0, 0, (void**)&data, D3DLOCK_READONLY);
+	if (FAILED(hr))
+	{
+		lock.Invalidate();
+		throw exception::FailedToLock("Failed to lock vertex buffer!");
+	}
+
+	lock.SetLock(data, m_vertexDeclaration->GetSizeInBytes(bufferIndex), GetLength(bufferIndex), unify::DataLockAccess::Readonly, 0);
+}
+
+void VertexBuffer::Unlock(size_t bufferIndex, unify::DataLock& lock)
+{
+	if (!m_buffers[bufferIndex] || !m_locked[bufferIndex]) return;
+	m_buffers[bufferIndex]->Unlock();
+	m_locked[bufferIndex] = FALSE;	// altering data in a constant function
+}
+
+void VertexBuffer::UnlockReadOnly(size_t bufferIndex, unify::DataLock& lock) const
+{
+	if (!m_buffers[bufferIndex] || !m_locked[bufferIndex]) return;
+	m_buffers[bufferIndex]->Unlock();
+	m_locked[bufferIndex] = false;
+}
+
+bool VertexBuffer::Locked(size_t bufferIndex) const
+{
+	return m_locked[bufferIndex];
+}
+
+BufferUsage::TYPE VertexBuffer::GetUsage(size_t bufferIndex) const
+{
+	return m_usage[bufferIndex];
 }

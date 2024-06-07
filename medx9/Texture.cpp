@@ -3,6 +3,7 @@
 
 #include <medx9/Texture.h>
 #include <qxml/Document.h>
+#include <unify/DataLock.h>
 #include <me/exception/NotImplemented.h>
 #include <me/exception/FailedToLock.h>
 
@@ -60,11 +61,7 @@ const unsigned int Texture::FileHeight() const
 	return m_fileSize.height;
 }
 
-const unify::Size< unsigned int > & Texture::ImageSize() const
-{
-	return m_imageSize;
-}
-
+/*
 bool Texture::GetRenderable() const
 {
 	return m_parameters.renderable;
@@ -74,21 +71,34 @@ bool Texture::GetLockable() const
 {
 	return m_parameters.lockable;
 }
+*/
 
-void Texture::LockRect( unsigned int level, TextureLock & lock, const unify::Rect< long > * rect, bool readonly )
+const unify::Size< unsigned int >& Texture::ImageSize() const
+{
+	return m_imageSize;
+}
+
+me::render::TextureLockAccess Texture::GetLockAccess() const
+{
+	return m_parameters.lockAccess;
+}
+
+void Texture::LockRect( unsigned int level, TextureLock & lock, const unify::Rect< long > * rect, unify::DataLockAccess::TYPE access)
 {
 	if ( !m_created )
 	{
 		Create();
 	}
 
+	/* // SAS TODO:
 	if( m_parameters.lockable == false )
 	{
 		throw exception::FailedToLock( "Texture is not lockable!" );
 	}
+	*/
 		
 	// Allow us to convert from our flag type to DX.
-	unsigned int dxFlags = readonly ? D3DLOCK_READONLY : 0;
+	unsigned int dxFlags = (access == unify::DataLockAccess::Readonly) ? D3DLOCK_READONLY : 0;
 
 	D3DLOCKED_RECT d3dLockedRect;
 	if( FAILED( m_texture->LockRect( level, &d3dLockedRect, (RECT*)rect, dxFlags ) ) )
@@ -165,10 +175,12 @@ void Texture::LoadImage( unify::Path filePath )
 
 
 	D3DPOOL pool = D3DPOOL_DEFAULT;
+	/* // SAS TODO:
 	if( m_parameters.lockable )
 	{
 		pool = m_parameters.renderable ? D3DPOOL_MANAGED : D3DPOOL_SCRATCH;
 	}
+	*/
 
 	HRESULT result;
 	result = D3DXCreateTextureFromFileExA(

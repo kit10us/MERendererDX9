@@ -2,12 +2,13 @@
 // All Rights Reserved
 
 #include <medx9/VertexShader.h>
+#include <medx9/ConstantBuffer.h>
 #include <me/exception/NotImplemented.h>
 
 using namespace medx9;
 using namespace me;
 using namespace render;
-using namespace shader;
+//using namespace shader;
 
 VertexShader::VertexShader( IRenderer * renderer )
 	: m_renderer( dynamic_cast< Renderer * >( renderer ) )
@@ -116,8 +117,8 @@ void VertexShader::Create( VertexShaderParameters parameters )
 		throw unify::Exception( "Attempted to create shader from unknown source!" );
 	}
 
-	m_constants.reset( new shader::ConstantBuffer );
-	m_constants->AddBuffer();
+	// SAS TODO: m_constants.reset( new shader::ConstantBuffer );
+	// SAS TODO: m_constants->AddBuffer();
 
 	m_renderer->GetDxDevice()->CreateVertexShader( (unsigned long *)m_codeBuffer->GetBufferPointer(), &m_shader );
 
@@ -130,7 +131,7 @@ void VertexShader::Create( VertexShaderParameters parameters )
 
 	if ( m_worldMatrixHandle != 0 )
 	{
-		m_constants->AddVariable( 0, { "world", ElementFormat::Matrix4x4, 1 } );
+		// SAS TODO: m_constants->AddVariable( 0, { "world", ElementFormat::Matrix4x4, 1 } );
 	}
 											
 	m_viewMatrixHandle = m_constantTable->GetConstantByName( 0, "viewMatrix" );
@@ -141,7 +142,7 @@ void VertexShader::Create( VertexShaderParameters parameters )
 
 	if ( m_viewMatrixHandle != 0 )
 	{
-		m_constants->AddVariable( 0, { "view", ElementFormat::Matrix4x4, 1 } );
+		// SAS TODO: m_constants->AddVariable( 0, { "view", ElementFormat::Matrix4x4, 1 } );
 	}
 
 
@@ -153,15 +154,16 @@ void VertexShader::Create( VertexShaderParameters parameters )
 
 	if ( m_projectionMatrixHandle != 0 )
 	{
-		m_constants->AddVariable( 0, { "projection", ElementFormat::Matrix4x4, 1 } );
+		// SAS TODO: m_constants->AddVariable( 0, { "projection", ElementFormat::Matrix4x4, 1 } );
 	}
 
-	m_lockData.resize( m_constants->GetVariables( 0 ).size() );
+	// SAS TODO: m_lockData.resize( m_constants->GetVariables( 0 ).size() );
 	
 	m_vertexDeclaration->Build( m_renderer, *this );
 	m_created = true;
 }
 
+/* // SAS TODO: 
 const ConstantBuffer * VertexShader::GetConstants() const
 {
 	return m_constants.get();
@@ -176,6 +178,7 @@ void VertexShader::UnlockConstants( size_t buffer, unify::DataLock & lock )
 {
 	// Do nothing, we just needed m_lockData updated.
 }
+*/
 
 void VertexShader::SetVertexDeclaration( VertexDeclaration::ptr vertexDeclaration )
 {
@@ -185,6 +188,12 @@ void VertexShader::SetVertexDeclaration( VertexDeclaration::ptr vertexDeclaratio
 VertexDeclaration::ptr VertexShader::GetVertexDeclaration() const
 {
 	return m_vertexDeclaration;
+}
+
+IConstantBuffer::ptr VertexShader::VertexShader::CreateConstantBuffer(BufferUsage::TYPE usage) const
+{
+	ConstantBuffer::ptr constantBuffer{ new ConstantBuffer(m_renderer, ConstantBufferParameters{ me::render::ResourceType::VertexShader, usage, m_parameters.constantTable }) };
+	return constantBuffer;
 }
 
 const void * VertexShader::GetBytecode() const
@@ -225,19 +234,19 @@ void VertexShader::Use()
 	}
 }
 
-std::string VertexShader::GetSource() const
+bool VertexShader::IsTrans() const
 {
-	return m_filePath.ToXPath();
+	return m_parameters.trans;
 }
 
 bool VertexShader::Reload()
 {
 	Destroy();
-	Create( m_parameters );
+	Create(m_parameters);
 	return true;
 }
 
-bool VertexShader::IsTrans() const
+std::string VertexShader::GetSource() const
 {
-	return m_parameters.trans;
+	return m_filePath.ToXPath();
 }

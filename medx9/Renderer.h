@@ -18,8 +18,6 @@ namespace medx9
 		Renderer( me::os::IOS * os, me::render::Display display, size_t index );
 		virtual ~Renderer();					
 
-		me::game::IGame * GetGame() override;
-
 		const me::render::Display & GetDisplay() const;
 
 		IDirect3DDevice9 * GetDxDevice() const;
@@ -35,9 +33,9 @@ namespace medx9
 
 		size_t GetIndex() const override;
 
-		void* GetHandle() const override;
-													  
-		void Render( const me::render::RenderMethod & method, const me::render::RenderInfo & renderInfo, me::render::MatrixFeed & matrixFeed ) override;
+		void Render(const me::render::RenderInfo& renderInfo, const me::render::RenderMethod& method, me::render::Effect::ptr effect, me::render::IConstantBuffer* vertexCB, me::render::IConstantBuffer* pixelCB, me::render::MatrixFeed& matrixFeed) override;
+		void Render(const me::render::RenderInfo& renderInfo, const me::render::RenderMethod& method, me::render::BufferSet* bufferSet, me::render::MatrixFeed& matrixFeed) override;
+
 
 		me::render::IVertexBuffer::ptr ProduceVB( me::render::VertexBufferParameters parameters ) override;
 		me::render::IIndexBuffer::ptr ProduceIB( me::render::IndexBufferParameters parameters ) override;

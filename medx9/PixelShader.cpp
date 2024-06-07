@@ -2,13 +2,13 @@
 // All Rights Reserved
 
 #include <medx9/PixelShader.h>
+#include <medx9/ConstantBuffer.h>
 #include <me/exception/NotImplemented.h>
 #include <me/exception/FailedToCreate.h>
 
 using namespace medx9;
 using namespace me;
 using namespace render;
-using namespace shader;
 
 PixelShader::PixelShader( IRenderer * renderer )
 	: m_renderer( dynamic_cast< Renderer * >( renderer ) )
@@ -107,6 +107,7 @@ void PixelShader::Create( PixelShaderParameters parameters )
 	m_renderer->GetDxDevice()->CreatePixelShader( (unsigned long *)m_codeBuffer->GetBufferPointer(), &m_shader );
 }
 
+/* // SAS TODO: 
 const ConstantBuffer * PixelShader::GetConstants() const
 {
 	return m_constants.get();
@@ -120,6 +121,30 @@ void PixelShader::UnlockConstants( size_t buffer, unify::DataLock & lock )
 {
 	// Do nothing, we just needed m_lockData updated.
 }
+*/
+
+me::render::BlendDesc PixelShader::GetBlendDesc() const
+{
+	return m_parameters.blendDesc;
+}
+
+me::render::IConstantBuffer::ptr PixelShader::CreateConstantBuffer(BufferUsage::TYPE usage) const
+{
+	ConstantBuffer::ptr constantBuffer{ new ConstantBuffer(m_renderer, ConstantBufferParameters{ me::render::ResourceType::PixelShader, usage, m_parameters.constantTable }) };
+	return constantBuffer;
+}
+
+const void* PixelShader::GetBytecode() const
+{
+	// SAS TODO:
+	return nullptr;
+}
+
+size_t PixelShader::GetBytecodeLength() const
+{
+	// SAS TODO:
+	return 0;
+}
 
 void PixelShader::Use()
 {
@@ -128,6 +153,11 @@ void PixelShader::Use()
 	{
 		throw unify::Exception( "Failed to set pixel shader!" );
 	}
+}
+
+bool PixelShader::IsTrans() const
+{
+	return m_parameters.trans;
 }
 
 std::string PixelShader::GetSource() const
@@ -140,9 +170,4 @@ bool PixelShader::Reload()
 	Destroy();
 	Create( m_parameters );
 	return true;
-}
-
-bool PixelShader::IsTrans() const
-{
-	return m_parameters.trans;
 }

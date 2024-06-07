@@ -34,24 +34,25 @@ namespace medx9
 
 	public: // me::render::IIndexBuffer
 		void Create( me::render::IndexBufferParameters parameters );
-		size_t GetStride( size_t bufferIndex ) const override;
+		size_t GetStride( size_t bufferIndex ) const;
+		bool Valid() const;
 
 	public: // me::render::IBuffer
-		void Destroy();
+		void Destroy() override;
+
+		size_t GetBufferCount() const override;
+
+		void Use(size_t startBuffer, size_t startSlot) const override;
 
 		void Lock( size_t bufferIndex, unify::DataLock & lock ) override;
 		void LockReadOnly( size_t bufferIndex, unify::DataLock & lock ) const override;
 		void Unlock( size_t bufferIndex, unify::DataLock & lock ) override;
 		void UnlockReadOnly( size_t bufferIndex, unify::DataLock & lock ) const override;
 
-		bool Valid() const;
-		
-		void Use() const override;
-
 		bool Locked( size_t bufferIndex ) const override;
 		me::render::BufferUsage::TYPE GetUsage( size_t bufferIndex ) const;
 		size_t GetLength( size_t bufferIndex ) const;
-		size_t GetSizeInBytes( size_t bufferIndex ) const override;
+		size_t GetSizeInBytes( size_t bufferIndex ) const;
 
 	protected:
 		const Renderer * m_renderer;

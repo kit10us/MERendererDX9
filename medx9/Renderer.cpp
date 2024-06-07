@@ -110,11 +110,6 @@ Renderer::~Renderer()
 {
 }
 
-me::game::IGame * Renderer::GetGame()
-{
-	return m_os->GetGame();
-}
-
 const Display & Renderer::GetDisplay() const
 {
 	return m_display;
@@ -185,12 +180,7 @@ size_t Renderer::GetIndex() const
 	return m_index;
 }
 
-void* Renderer::GetHandle() const
-{
-	return (HWND)m_display.GetHandle();
-}
-
-void Renderer::Render( const RenderMethod & method, const RenderInfo & renderInfo, MatrixFeed & matrixFeed )
+void Renderer::Render(const me::render::RenderInfo& renderInfo, const me::render::RenderMethod& method, me::render::Effect::ptr effect, me::render::IConstantBuffer* vertexCB, me::render::IConstantBuffer* pixelCB, me::render::MatrixFeed& matrixFeed)
 {
 	while( ! matrixFeed.Done() )
 	{
@@ -211,11 +201,14 @@ void Renderer::Render( const RenderMethod & method, const RenderInfo & renderInf
 		
 		HRESULT hr = S_OK;
 
-		if ( method.effect )
-		{
-			method.effect->UpdateData( renderInfo, &matrix, 1 );
-			method.effect->Use( this , renderInfo );
-		}
+		
+		const D3DXMATRIX worldMatrix = D3DXMATRIX(static_cast<const float*>(matrix.linear));
+		const D3DXMATRIX viewMatrix = D3DXMATRIX(static_cast<const float*>(renderInfo.GetViewMatrix().linear));
+		const D3DXMATRIX projectionMatrix = D3DXMATRIX(static_cast<const float*>(renderInfo.GetProjectionMatrix().linear));
+
+		dxDevice->SetTransform(D3DTS_WORLD, &worldMatrix);
+		dxDevice->SetTransform(D3DTS_VIEW, &viewMatrix);
+		dxDevice->SetTransform(D3DTS_PROJECTION, &projectionMatrix);
 
 		// Draw Primitive...
 		if( method.useIB == false )
@@ -231,6 +224,11 @@ void Renderer::Render( const RenderMethod & method, const RenderInfo & renderInf
 			throw exception::Render( "Failed to render vertex buffer!" );
 		}
 	}
+}
+
+void Renderer::Render(const me::render::RenderInfo& renderInfo, const me::render::RenderMethod& method, me::render::BufferSet* bufferSet, me::render::MatrixFeed& matrixFeed)
+{
+	Render(renderInfo, method, bufferSet->GetEffect(), bufferSet->GetVertexCB(), bufferSet->GetPixelCB(), matrixFeed);
 }
 
 IVertexBuffer::ptr Renderer::ProduceVB( VertexBufferParameters parameters )

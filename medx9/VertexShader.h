@@ -7,6 +7,7 @@
 #include <medx9/Renderer.h>
 #include <me/render/IVertexShader.h>
 #include <me/render/VertexDeclaration.h>
+#include <me/render/IConstantBuffer.h>
 #include <unify/Path.h>
 #include <atlbase.h>
 
@@ -24,25 +25,24 @@ namespace medx9
 
 		void Create( me::render::VertexShaderParameters parameters );
 
-		const me::shader::ConstantBuffer * GetConstants() const override;
+		// SAS TODO: const me::shader::ConstantBuffer * GetConstants() const override;
 
-		void LockConstants( size_t buffer, unify::DataLock & lock ) override;	  
-		void UnlockConstants( size_t buffer, unify::DataLock & lock ) override;	  
+		// SAS TODO: void LockConstants( size_t buffer, unify::DataLock & lock ) override;	  
+		// SAS TODO: void UnlockConstants( size_t buffer, unify::DataLock & lock ) override;	  
 
 		void SetVertexDeclaration( me::render::VertexDeclaration::ptr vertexDeclaration );
 		me::render::VertexDeclaration::ptr GetVertexDeclaration() const override;
 
+	public: // me::render::IShader
+		me::render::IConstantBuffer::ptr CreateConstantBuffer(me::render::BufferUsage::TYPE usage) const override;
 		const void * GetBytecode() const override;
-
 		size_t GetBytecodeLength() const override;
-
 		void Use() override;
-
-		std::string GetSource() const override;
-
-		bool Reload() override;
-
 		bool IsTrans() const override;
+
+	public: // rm::IResource
+		bool Reload() override;
+		std::string GetSource() const override;
 
 	protected:	   
 		me::render::VertexShaderParameters m_parameters;
@@ -54,7 +54,7 @@ namespace medx9
 		std::string m_profile;
 		std::string m_errorMessage;
 		bool m_created;
-		me::shader::ConstantBuffer::ptr m_constants;
+		//me::shader::ConstantBuffer::ptr m_constants;
 		me::render::VertexDeclaration::ptr m_vertexDeclaration;
 
 		medx9::Renderer * m_renderer;

@@ -70,22 +70,23 @@ namespace medx9
 	
 		const unsigned int FileHeight() const;
 
-		const unify::Size< unsigned int > & ImageSize() const;
-
+		/* // SAS TODO:
 		bool GetRenderable() const;
 
 		bool GetLockable() const;
+		*/
 
-		void LockRect( unsigned int level, me::render::TextureLock & lock, const unify::Rect< long > * rect, bool readonly );
+	public: // me::render::ITexture
+		const unify::Size< unsigned int >& ImageSize() const;
+		me::render::TextureLockAccess GetLockAccess() const override;
+		void LockRect( unsigned int level, me::render::TextureLock & lock, const unify::Rect< long > * rect, unify::DataLockAccess::TYPE access) override;
 		void UnlockRect( unsigned int level );
-
 		me::render::SpriteDictionary & GetSpriteDictionary() override;
 		const me::render::SpriteDictionary & GetSpriteDictionary() const override;
-
 		const me::render::TextureParameters * GetParameters() const override;
 
+	private: // rm::IResource
 		bool Reload() override;
-
 		std::string GetSource() const override;
 
 	protected:
